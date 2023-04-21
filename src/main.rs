@@ -73,46 +73,30 @@ pub fn get_current_monitor() -> Monitor {
 //TODO: refactor this nonsense
 pub fn select_workspace(workspace_number: &u64) {
     let mon = get_current_monitor();
-    match mon.id {
-        0 => workspace::focus(workspace_number),
-        _ => {
-            workspace::focus(
-                &format!("{}{}", mon.id, workspace_number)
-                    .parse::<u64>()
-                    .unwrap(),
-            );
-        }
-    }
+    let modified_workspace_number = modify_workspace_number(mon.id, *workspace_number);
+    workspace::focus(&modified_workspace_number);
 }
 
-//TODO: refactor this nonsense
 pub fn send_to_workspace(workspace_number: &u64) {
     let mon = get_current_monitor();
-    match mon.id {
-        0 => workspace::move_to(workspace_number),
-        _ => {
-            workspace::move_to(
-                &format!("{}{}", mon.id, workspace_number)
-                    .parse::<u64>()
-                    .unwrap(),
-            );
-        }
-    }
+    let modified_workspace_number = modify_workspace_number(mon.id, *workspace_number);
+    workspace::move_to(&modified_workspace_number);
 }
 
-//TODO: refactor this nonsense
 pub fn movefocus(workspace_number: &u64) {
     let mon = get_current_monitor();
-    match mon.id {
-        0 => workspace::move_focus(workspace_number),
-        _ => {
-            workspace::move_focus(
-                &format!("{}{}", mon.id, workspace_number)
-                    .parse::<u64>()
-                    .unwrap(),
-            );
-        }
+    let modified_workspace_number = modify_workspace_number(mon.id, *workspace_number);
+    workspace::move_focus(&modified_workspace_number);
+}
+
+pub fn modify_workspace_number(_mon_id: i16, workspace_number: u64) -> u64 {
+    #[cfg(debug_assertions)]
+    {
+        println!("Monitor ID: {}", _mon_id);
+        println!("Workspace Number: {}", workspace_number);
     }
+
+    workspace_number
 }
 
 pub fn get_leftmost_client_for_monitor(mon_id: i16) -> Client {
